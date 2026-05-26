@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Ensaio, Máquina & Método</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cr:#EDE8D4;--dk:#0E0E0E;
+  --red:#BF3728;--teal:#2E7C7A;--navy:#1A3A6A;--gold:#C9A02A;
+  --txt:#1A1A1A;--mu:#5A5550;
+  --sf:'Playfair Display',serif;--ss:'Jost',sans-serif;
+}
+html,body{width:100%;height:100%;background:#1C1C1C;display:flex;flex-direction:column;align-items:center;font-family:var(--ss);overflow:hidden}
+.nav{width:100%;display:flex;align-items:center;justify-content:space-between;padding:7px 18px;flex-shrink:0;max-height:40px}
+.nbtns{display:flex;gap:6px}
+.nb{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:4px 12px;cursor:pointer;font-family:var(--ss);font-size:9px;letter-spacing:2px;text-transform:uppercase;transition:all .15s}
+.nb:hover{background:rgba(255,255,255,.1);color:#fff}
+.ctr{color:rgba(255,255,255,.35);font-size:9px;letter-spacing:3px}
+/* DECK wrapper for scaling */
+.wr{position:relative;width:1440px;height:810px;transform-origin:top left;flex-shrink:0}
+.slide{display:none;position:absolute;inset:0}
+.slide.active{display:block}
+.cr{background:var(--cr)}.dk{background:var(--dk)}
+/* ruler */
+.rl{position:absolute;top:0;left:36px;right:36px;height:24px;display:flex;align-items:flex-end}
+.t{flex:1;height:4px;border-left:1px solid rgba(0,0,0,.15)}
+.dk .t{border-color:rgba(255,255,255,.1)}
+/* frame */
+.fr{position:absolute;inset:24px 36px 0;border:1px solid rgba(0,0,0,.1);pointer-events:none}
+/* footer */
+.ft{position:absolute;bottom:0;left:0;right:0;height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 50px;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--mu);border-top:1px solid rgba(0,0,0,.09)}
+.dk .ft{color:rgba(237,232,212,.28);border-color:rgba(255,255,255,.07)}
+/* labels */
+.lb{position:absolute;top:42px;left:56px;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--mu);font-weight:300}
+.lb::after{content:'';display:block;width:36px;height:1px;background:currentColor;margin-top:4px}
+.dk .lb{color:var(--gold)}
+
+/* ——— CAPA ——— */
+.capa .arc{position:absolute;top:36px;left:56px;right:56px;height:170px}
+.capa .bt{position:absolute;bottom:145px;left:56px;font-family:var(--sf);line-height:.9}
+.capa .t1{display:block;font-size:96px;font-weight:700;color:var(--txt)}
+.capa .t2{display:block;font-size:96px;font-weight:700;color:var(--red)}
+.capa .t3{display:block;font-size:96px;font-weight:700;color:var(--navy)}
+.capa .su{position:absolute;bottom:96px;left:60px;font-family:var(--sf);font-style:italic;font-size:18px;color:var(--mu)}
+
+/* ——— ABERTURA ——— */
+.ab .bq{position:absolute;top:110px;left:66px;font-family:var(--sf);font-size:58px;line-height:1.1;color:var(--txt);max-width:760px}
+.ab .bq em{color:var(--red);font-style:normal}
+.ab .sq{position:absolute;bottom:56px;left:68px;font-size:13px;color:var(--mu)}
+.ab .tgt{position:absolute;right:110px;top:50%;transform:translateY(-50%)}
+
+/* ——— SEÇÃO ——— */
+.se .sn{position:absolute;top:42px;left:56px;font-size:9px;letter-spacing:4px;color:var(--gold);font-weight:300}
+.se .sn::after{content:'';display:block;width:36px;height:1px;background:var(--gold);margin-top:4px}
+.se .st{position:absolute;top:126px;left:56px;font-family:var(--sf);font-size:84px;line-height:.94;color:#EDE8D4}
+.se .st em{color:var(--gold);font-style:normal}
+.se .ss{position:absolute;bottom:58px;left:60px;font-family:var(--sf);font-style:italic;font-size:15px;color:rgba(237,232,212,.42)}
+.se .sr{position:absolute;right:90px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:32px;align-items:center}
+
+/* ——— CONTEÚDO A ——— */
+.ca .ct{position:absolute;top:96px;left:58px;right:58px;font-family:var(--sf);font-size:40px;color:var(--txt);line-height:1.08}
+.ca .cls{position:absolute;top:208px;left:56px;right:56px;bottom:44px;display:flex;gap:50px}
+.ca .cl{flex:1;display:flex;flex-direction:column}
+.ca .cl.rd{border-left:3px solid var(--red);padding-left:20px}
+.ca .cl.bl{border-left:3px solid var(--navy);padding-left:20px}
+.ca .cl.tl{border-left:3px solid var(--teal);padding-left:20px}
+.ca .cl.gd{border-left:3px solid var(--gold);padding-left:20px}
+.ca .cl-lb{font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:var(--mu);margin-bottom:14px}
+.ca .cl p{font-size:20px;line-height:1.55;color:var(--txt)}
+.ca .cl ul{list-style:none}
+.ca .cl li{font-size:18px;line-height:1.7;color:var(--txt);padding-left:14px;position:relative}
+.ca .cl li::before{content:'—';position:absolute;left:0;color:var(--mu);font-size:12px;top:5px}
+
+/* ——— CONTEÚDO B (citação) ——— */
+.cb .qm{position:absolute;top:64px;left:46px;font-size:120px;font-family:var(--sf);line-height:1;color:var(--red)}
+.cb .qt{position:absolute;top:138px;left:90px;right:370px;font-family:var(--sf);font-style:italic;line-height:1.3;color:var(--txt)}
+.cb .qt em{color:var(--navy);font-style:normal}
+.cb .qa{position:absolute;bottom:85px;left:90px;display:flex;align-items:center;gap:16px;font-size:8.5px;letter-spacing:3.5px;text-transform:uppercase;color:var(--mu)}
+.cb .qa::before{content:'';display:block;width:36px;height:1px;background:var(--mu)}
+.cb .dc{position:absolute;right:80px;top:50%;transform:translateY(-50%)}
+
+/* ——— CONTEÚDO C (grade) ——— */
+.cc .gt{position:absolute;top:82px;left:58px;font-family:var(--sf);font-size:40px;color:var(--txt)}
+.cc .gd-grid{position:absolute;top:162px;left:48px;right:48px;bottom:42px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cc .crd{border:2px solid;padding:22px 24px;display:flex;flex-direction:column;gap:10px}
+.cc .crd-hd{font-family:var(--sf);font-size:22px;color:var(--txt);margin-bottom:4px}
+.cc .crd-lb{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--mu)}
+.cc .crd-tx{font-size:16px;color:var(--mu);line-height:1.55}
+
+/* ——— DIAGRAM slides ——— */
+.dg .dt{position:absolute;top:84px;left:58px;right:58px;font-family:var(--sf);font-size:38px;color:var(--txt);line-height:1.08}
+.dg .ds{position:absolute;top:155px;left:60px;font-style:italic;font-size:13px;color:var(--mu)}
+.dg .da{position:absolute;top:192px;left:56px;right:56px;bottom:48px}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nbtns">
+    <button class="nb" onclick="prev()">← anterior</button>
+    <button class="nb" onclick="next()">próximo →</button>
+  </div>
+  <div class="ctr" id="ctr">01 / 36</div>
+  <div style="color:rgba(255,255,255,.2);font-size:9px;letter-spacing:2px">← → navegar</div>
+</div>
+
+<div class="wr" id="wr">
+
+<!-- ═══════════════════════ S01 CAPA ═══════════════════════ -->
+<div class="slide cr capa active" id="s1">
+<div class="rl" id="rl1"></div><div class="fr"></div>
+<svg class="arc" viewBox="0 0 1368 160" style="position:absolute;top:36px;left:56px;right:56px;width:calc(100% - 112px);height:160px">
+  <path d="M80 140 Q684 28 1290 140" fill="none" stroke="#1A1A1A" stroke-width="1.2"/>
+  <circle cx="80" cy="140" r="24" fill="#BF3728"/>
+  <text x="80" y="170" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">PERGUNTA</text>
+  <circle cx="296" cy="85" r="22" fill="none" stroke="#2E7C7A" stroke-width="5"/>
+  <text x="296" y="116" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">MÉTODO</text>
+  <g transform="translate(656,50)"><rect x="0" y="0" width="10" height="10" fill="#C9A02A"/><rect x="13" y="0" width="10" height="10" fill="#C9A02A"/><rect x="26" y="0" width="10" height="10" fill="#C9A02A"/><rect x="0" y="13" width="10" height="10" fill="#C9A02A"/><rect x="13" y="13" width="10" height="10" fill="#C9A02A"/><rect x="26" y="13" width="10" height="10" fill="#C9A02A"/><rect x="0" y="26" width="10" height="10" fill="#C9A02A"/><rect x="13" y="26" width="10" height="10" fill="#C9A02A"/><rect x="26" y="26" width="10" height="10" fill="#C9A02A"/></g>
+  <text x="684" y="116" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">DADO</text>
+  <rect x="864" y="60" width="44" height="44" fill="#1A3A6A"/>
+  <text x="886" y="120" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">MÁQUINA</text>
+  <path d="M1065 120 A25 25 0 0 1 1115 120 Z" fill="#BF3728"/>
+  <text x="1090" y="144" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">ENSAIO</text>
+  <circle cx="1265" cy="126" r="11" fill="#2E7C7A"/><circle cx="1287" cy="126" r="11" fill="#2E7C7A"/><circle cx="1276" cy="110" r="11" fill="#2E7C7A"/>
+  <text x="1276" y="150" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">PÚBLICO</text>
+</svg>
+<div class="bt"><span class="t1">ENSAIO,</span><span class="t2">MÁQUINA</span><span class="t3">&amp; MÉTODO</span></div>
+<div class="su">pesquisar na era da inteligência artificial</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S02 ABERTURA ═══════════════════════ -->
+<div class="slide cr ab" id="s2">
+<div class="rl" id="rl2"></div><div class="fr"></div>
+<div class="lb">ABERTURA · 01</div>
+<div class="bq">IA, e agora?<br>a ciência está<br>inaugurando um <em>novo<br>paradigma?</em></div>
+<div class="sq">uma conversa a partir de Kuhn, Boaventura e o método indutivo da IA.</div>
+<svg class="tgt" width="290" height="290" style="position:absolute;right:108px;top:50%;transform:translateY(-50%)">
+  <circle cx="145" cy="145" r="138" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+  <circle cx="145" cy="145" r="92" fill="#2E7C7A"/>
+  <circle cx="145" cy="145" r="46" fill="#EDE8D4"/>
+  <circle cx="145" cy="145" r="38" fill="#BF3728"/>
+</svg>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S03 SEÇÃO 01 ═══════════════════════ -->
+<div class="slide dk se" id="s3">
+<div class="rl" id="rl3"></div>
+<div class="sn">§ 01</div>
+<div class="st">como a<br><em>ciência funciona</em></div>
+<div class="ss">paradigma, anomalia, crise e revolução — Kuhn</div>
+<div class="sr">
+  <svg width="56" height="56"><circle cx="28" cy="28" r="26" fill="none" stroke="#2E7C7A" stroke-width="6"/></svg>
+  <svg width="56" height="56"><circle cx="28" cy="28" r="28" fill="#BF3728"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S04 O QUE É UM PARADIGMA ═══════════════════════ -->
+<div class="slide cr ca" id="s4">
+<div class="rl" id="rl4"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · A · DUAS COLUNAS</div>
+<div class="ct">o que é um paradigma? — e o que é ciência normal?</div>
+<div class="cls">
+  <div class="cl rd">
+    <div class="cl-lb">PARADIGMA</div>
+    <ul>
+      <li>realização científica aceita como modelo pela comunidade</li>
+      <li>define o que conta como problema legítimo</li>
+      <li>define quais ferramentas e métodos são válidos</li>
+      <li>uma visão de mundo compartilhada — não questionada</li>
+    </ul>
+  </div>
+  <div class="cl bl">
+    <div class="cl-lb">CIÊNCIA NORMAL</div>
+    <ul>
+      <li>cientistas atuam dentro do paradigma vigente</li>
+      <li>não buscam inovação — resolvem quebra-cabeças</li>
+      <li>as regras e ferramentas já estão dadas pelo paradigma</li>
+      <li>anomalias surgem e são inicialmente ignoradas</li>
+    </ul>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S05 DIAGRAMA KUHN ═══════════════════════ -->
+<div class="slide cr dg" id="s5">
+<div class="rl" id="rl5"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · D · DIAGRAMA</div>
+<div class="dt">o ciclo de Kuhn — como uma revolução científica acontece</div>
+<div class="da">
+<svg viewBox="0 0 1328 560" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- arcos de seta circulares -->
+  <!-- Base: círculo guia invisível r=200, centro 664,280 -->
+  <!-- nós nas posições: top=664,80 | right=904,280 | bottom=664,480 | left=424,280 -->
+
+  <!-- Arco top→right -->
+  <path d="M 700 92 A 210 210 0 0 1 892 316" fill="none" stroke="#C9A02A" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+  <!-- Arco right→bottom -->
+  <path d="M 892 316 A 210 210 0 0 1 628 468" fill="none" stroke="#BF3728" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr2)"/>
+  <!-- Arco bottom→left -->
+  <path d="M 628 468 A 210 210 0 0 1 436 244" fill="none" stroke="#1A3A6A" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr3)"/>
+  <!-- Arco left→top (revolução → novo paradigma) -->
+  <path d="M 436 244 A 210 210 0 0 1 628 92" fill="none" stroke="#2E7C7A" stroke-width="2.5" marker-end="url(#arr4)"/>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C9A02A"/></marker>
+    <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#BF3728"/></marker>
+    <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1A3A6A"/></marker>
+    <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2E7C7A"/></marker>
+  </defs>
+
+  <!-- NÓ 1: CIÊNCIA NORMAL (top) -->
+  <circle cx="664" cy="80" r="64" fill="#1A3A6A"/>
+  <text x="664" y="73" text-anchor="middle" font-family="'Jost'" font-size="13" fill="white" letter-spacing="2">CIÊNCIA</text>
+  <text x="664" y="91" text-anchor="middle" font-family="'Jost'" font-size="13" fill="white" letter-spacing="2">NORMAL</text>
+
+  <!-- NÓ 2: ANOMALIA (right) -->
+  <circle cx="904" cy="280" r="60" fill="#C9A02A"/>
+  <text x="904" y="276" text-anchor="middle" font-family="'Jost'" font-size="13" fill="white" letter-spacing="2">ANOMALIA</text>
+  <text x="904" y="293" text-anchor="middle" font-family="'Jost'" font-size="10" fill="rgba(255,255,255,.7)">não explicada</text>
+
+  <!-- NÓ 3: CRISE (bottom) -->
+  <circle cx="664" cy="480" r="64" fill="#BF3728"/>
+  <text x="664" y="475" text-anchor="middle" font-family="'Jost'" font-size="13" fill="white" letter-spacing="2">CRISE</text>
+  <text x="664" y="493" text-anchor="middle" font-family="'Jost'" font-size="10" fill="rgba(255,255,255,.7)">ciência extraordinária</text>
+
+  <!-- NÓ 4: REVOLUÇÃO → NOVO PARADIGMA (left) -->
+  <circle cx="424" cy="280" r="64" fill="#2E7C7A"/>
+  <text x="424" y="273" text-anchor="middle" font-family="'Jost'" font-size="12" fill="white" letter-spacing="1.5">REVOLUÇÃO</text>
+  <text x="424" y="291" text-anchor="middle" font-family="'Jost'" font-size="11" fill="rgba(255,255,255,.8)">novo paradigma</text>
+
+  <!-- Balões explicativos -->
+  <!-- Top: ciência normal desc -->
+  <rect x="740" y="30" width="280" height="52" rx="4" fill="none" stroke="rgba(26,58,106,.3)" stroke-width="1"/>
+  <text x="756" y="52" font-family="'Jost'" font-size="12" fill="#5A5550">Cientistas resolvem quebra-cabeças</text>
+  <text x="756" y="70" font-family="'Jost'" font-size="12" fill="#5A5550">dentro do paradigma vigente</text>
+
+  <!-- Right: anomalia desc -->
+  <rect x="980" y="248" width="310" height="52" rx="4" fill="none" stroke="rgba(201,160,42,.3)" stroke-width="1"/>
+  <text x="996" y="270" font-family="'Jost'" font-size="12" fill="#5A5550">Fenômenos resistem às tentativas</text>
+  <text x="996" y="288" font-family="'Jost'" font-size="12" fill="#5A5550">de explicação pelo paradigma</text>
+
+  <!-- Bottom: crise desc -->
+  <rect x="740" y="500" width="300" height="52" rx="4" fill="none" stroke="rgba(191,55,40,.3)" stroke-width="1"/>
+  <text x="756" y="522" font-family="'Jost'" font-size="12" fill="#5A5550">Regras afrouxam. Cientistas</text>
+  <text x="756" y="540" font-family="'Jost'" font-size="12" fill="#5A5550">debatem os próprios fundamentos</text>
+
+  <!-- Left: revolução desc -->
+  <rect x="38" y="248" width="310" height="52" rx="4" fill="none" stroke="rgba(46,124,122,.3)" stroke-width="1"/>
+  <text x="54" y="270" font-family="'Jost'" font-size="12" fill="#5A5550">Novo paradigma reconstrói a área</text>
+  <text x="54" y="288" font-family="'Jost'" font-size="12" fill="#5A5550">— muda problema, método, visão de mundo</text>
+</svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S06 CITAÇÃO KUHN ═══════════════════════ -->
+<div class="slide cr cb" id="s6">
+<div class="rl" id="rl6"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm">"</div>
+<div class="qt" style="font-size:42px">toda revolução científica é, antes de tudo, uma <em>mudança de mundo para quem pesquisa.</em></div>
+<div class="qa">A PARTIR DE T. KUHN · A ESTRUTURA DAS REVOLUÇÕES CIENTÍFICAS</div>
+<div class="dc"><svg width="110" height="110"><rect x="0" y="0" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="39" y="0" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="78" y="0" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="0" y="39" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="39" y="39" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="78" y="39" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="0" y="78" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="39" y="78" width="32" height="32" fill="#C9A02A" opacity=".85"/><rect x="78" y="78" width="32" height="32" fill="#C9A02A" opacity=".85"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S07 SEÇÃO 02 ═══════════════════════ -->
+<div class="slide dk se" id="s7">
+<div class="rl" id="rl7"></div>
+<div class="sn">§ 02</div>
+<div class="st">a crise da ciência<br><em>moderna</em></div>
+<div class="ss">Einstein, quântica e o paradigma emergente — Boaventura de Sousa Santos</div>
+<div class="sr">
+  <svg width="56" height="28"><path d="M0 28 A28 28 0 0 1 56 28 Z" fill="#BF3728"/></svg>
+  <svg width="56" height="56"><rect width="56" height="56" fill="#1A3A6A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S08 COLAPSO DA CIÊNCIA MODERNA ═══════════════════════ -->
+<div class="slide cr ca" id="s8">
+<div class="rl" id="rl8"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · A · DUAS COLUNAS</div>
+<div class="ct">a ciência moderna colapsou por seus próprios avanços</div>
+<div class="cls">
+  <div class="cl rd">
+    <div class="cl-lb">O PARADIGMA MODERNO — O QUE PROMETIA</div>
+    <ul>
+      <li>observador neutro, separado do objeto</li>
+      <li>leis universais, mecanicistas e causais</li>
+      <li>sujeito e objeto radicalmente separados</li>
+      <li>previsão e controle da natureza via matemática</li>
+    </ul>
+  </div>
+  <div class="cl bl">
+    <div class="cl-lb">O QUE EINSTEIN E A QUÂNTICA REVELARAM</div>
+    <ul>
+      <li>não existe observador neutro — medir afeta o objeto</li>
+      <li>o ato de conhecer é parte do fenômeno conhecido</li>
+      <li>o rigor mecanicista não dá conta da complexidade</li>
+      <li>a separação sujeito-objeto é uma ilusão do paradigma</li>
+    </ul>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S09 GRADE PARADIGMA EMERGENTE ═══════════════════════ -->
+<div class="slide cr cc" id="s9">
+<div class="rl" id="rl9"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · C · GRADE</div>
+<div class="gt">os 4 pilares do paradigma emergente — Boaventura de Sousa Santos</div>
+<div class="gd-grid">
+  <div class="crd" style="border-color:var(--red)">
+    <div class="crd-lb">PILAR 01</div>
+    <div class="crd-hd">todo conhecimento científico-natural é científico-social</div>
+    <div class="crd-tx">As distinções rígidas entre ciências naturais e humanas perdem sentido. Há interpenetração e modelos sistêmicos.</div>
+  </div>
+  <div class="crd" style="border-color:var(--teal)">
+    <div class="crd-lb">PILAR 02</div>
+    <div class="crd-hd">todo conhecimento é local e total</div>
+    <div class="crd-tx">A superespecialização reducionista cede espaço ao olhar sobre a complexidade integral dos fenômenos.</div>
+  </div>
+  <div class="crd" style="border-color:var(--gold)">
+    <div class="crd-lb">PILAR 03</div>
+    <div class="crd-hd">todo conhecimento é autoconhecimento</div>
+    <div class="crd-tx">O sujeito volta ao centro. A explicação científica é indissociável de quem a constrói.</div>
+  </div>
+  <div class="crd" style="border-color:var(--navy)">
+    <div class="crd-lb">PILAR 04</div>
+    <div class="crd-hd">todo conhecimento visa um novo senso comum</div>
+    <div class="crd-tx">Dialoga com a vida cotidiana. Tecnologia como sabedoria prática — não como torre de marfim.</div>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S10 CITAÇÃO BOAVENTURA ═══════════════════════ -->
+<div class="slide cr cb" id="s10">
+<div class="rl" id="rl10"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm">"</div>
+<div class="qt" style="font-size:38px">estamos no meio de uma revolução científica onde podemos apenas <em>especular acerca do paradigma que emergirá.</em></div>
+<div class="qa">BOAVENTURA DE SOUSA SANTOS · A CRÍTICA DA RAZÃO INDOLENTE</div>
+<div class="dc"><svg width="96" height="96"><circle cx="48" cy="48" r="46" fill="none" stroke="#2E7C7A" stroke-width="4"/><circle cx="48" cy="48" r="28" fill="#2E7C7A" opacity=".18"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S11 SEÇÃO 03 ═══════════════════════ -->
+<div class="slide dk se" id="s11">
+<div class="rl" id="rl11"></div>
+<div class="sn">§ 03</div>
+<div class="st">IA,<br><em>e agora?</em></div>
+<div class="ss">ator ambíguo numa fresta — o novo paradigma ou sua negação?</div>
+<div class="sr">
+  <svg width="52" height="52"><rect width="52" height="52" fill="#1A3A6A"/></svg>
+  <svg width="52" height="52"><circle cx="26" cy="26" r="24" fill="none" stroke="#C9A02A" stroke-width="5"/></svg>
+  <svg width="52" height="26"><path d="M0 26 A26 26 0 0 1 52 26Z" fill="#BF3728"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S12 IA COMO ATOR AMBÍGUO ═══════════════════════ -->
+<div class="slide cr ca" id="s12">
+<div class="rl" id="rl12"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · A · DUAS COLUNAS</div>
+<div class="ct">a IA entra na fresta da crise — ator ambíguo, não novo paradigma</div>
+<div class="cls">
+  <div class="cl gd">
+    <div class="cl-lb">O QUE A IA APONTA</div>
+    <ul>
+      <li>o paradigma moderno falha com volumes massivos de dados</li>
+      <li>leis hipotético-dedutivas não preveem a complexidade caótica</li>
+      <li>a IA sugere: um paradigma estatístico-probabilístico</li>
+      <li>correlação massiva como substituto da causalidade</li>
+    </ul>
+  </div>
+  <div class="cl rd">
+    <div class="cl-lb">O QUE A IA FAZ AO MESMO TEMPO</div>
+    <ul>
+      <li>matematização extrema — tudo vira número</li>
+      <li>cristaliza preconceitos dos dados históricos</li>
+      <li>automatiza a "ditadura do passado"</li>
+      <li>aponta para o novo pela via mais conservadora: a correlação cega</li>
+    </ul>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S13 SEÇÃO 04 ═══════════════════════ -->
+<div class="slide dk se" id="s13">
+<div class="rl" id="rl13"></div>
+<div class="sn">§ 04</div>
+<div class="st">os bastidores<br><em>como a máquina aprende</em></div>
+<div class="ss">redes neurais, pesos, tokens e opacidade</div>
+<div class="sr">
+  <svg width="52" height="52"><rect x="0" y="0" width="13" height="13" fill="#C9A02A"/><rect x="20" y="0" width="13" height="13" fill="#C9A02A"/><rect x="39" y="0" width="13" height="13" fill="#C9A02A"/><rect x="0" y="20" width="13" height="13" fill="#C9A02A"/><rect x="20" y="20" width="13" height="13" fill="#C9A02A"/><rect x="39" y="20" width="13" height="13" fill="#C9A02A"/><rect x="0" y="39" width="13" height="13" fill="#C9A02A"/><rect x="20" y="39" width="13" height="13" fill="#C9A02A"/><rect x="39" y="39" width="13" height="13" fill="#C9A02A"/></svg>
+  <svg width="52" height="52"><rect width="52" height="52" fill="#1A3A6A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S14 DIAGRAMA CIMA/BAIXO ═══════════════════════ -->
+<div class="slide cr dg" id="s14">
+<div class="rl" id="rl14"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · D · DIAGRAMA</div>
+<div class="dt">a virada do aprendizado de máquina: de regras para padrões</div>
+<div class="da" style="top:174px;display:flex;gap:36px">
+  <!-- Bloco clássico -->
+  <div style="flex:1;border:1.5px solid rgba(26,58,106,.25);padding:28px 26px;display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:#5A5550">DE CIMA PARA BAIXO · CLÁSSICO</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+      <div style="background:#1A3A6A;color:#fff;padding:11px 16px;font-size:14px;text-align:center;font-family:'Jost'">PROGRAMADORES → regras explícitas</div>
+      <div style="text-align:center;color:#5A5550;font-size:20px">↓</div>
+      <div style="background:rgba(26,58,106,.1);padding:11px 16px;font-size:14px;text-align:center;color:#1A3A6A;font-family:'Jost'">MÁQUINA aplica as regras</div>
+      <div style="text-align:center;color:#5A5550;font-size:20px">↓</div>
+      <div style="padding:11px 16px;font-size:13px;color:#5A5550;text-align:center;border:1px dashed rgba(0,0,0,.18);line-height:1.4">limitado ao que os programadores sabem<br>não generaliza além do código dado</div>
+    </div>
+    <div style="font-size:12px;color:#5A5550;border-top:1px solid rgba(0,0,0,.1);padding-top:12px">Exemplo: Deep Blue (xadrez) — dominava um tabuleiro fechado,<br>não conseguia pegar um copo d'água</div>
+  </div>
+  <!-- seta -->
+  <div style="display:flex;align-items:center;font-size:28px;color:#C9A02A;flex-shrink:0;font-weight:300">⟶</div>
+  <!-- Bloco atual -->
+  <div style="flex:1;border:2px solid #C9A02A;padding:28px 26px;display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:#C9A02A">DE BAIXO PARA CIMA · APRENDIZADO DE MÁQUINA</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+      <div style="background:#C9A02A;color:#fff;padding:11px 16px;font-size:14px;text-align:center;font-family:'Jost'">DADOS alimentam o sistema</div>
+      <div style="text-align:center;color:#5A5550;font-size:20px">↓</div>
+      <div style="background:rgba(201,160,42,.12);padding:11px 16px;font-size:14px;text-align:center;color:#1A1A1A;font-family:'Jost'">MÁQUINA aprende por tentativa e erro</div>
+      <div style="text-align:center;color:#5A5550;font-size:20px">↓</div>
+      <div style="background:rgba(201,160,42,.06);padding:11px 16px;font-size:13px;text-align:center;color:#1A1A1A;border:1px solid #C9A02A;line-height:1.4">padrões emergem estatisticamente<br>generaliza — mas não compreende</div>
+    </div>
+    <div style="font-size:12px;color:#5A5550;border-top:1px solid rgba(201,160,42,.3);padding-top:12px">Parâmetros = bilhões de pesos numéricos ajustados<br>durante o treinamento com grandes volumes de dados</div>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S15 ILUSTRAÇÃO REDE NEURAL ═══════════════════════ -->
+<div class="slide cr dg" id="s15">
+<div class="rl" id="rl15"></div><div class="fr"></div>
+<div class="lb">ILUSTRAÇÃO · REDE NEURAL</div>
+<div class="dt">a rede neural: como bilhões de conexões geram uma resposta</div>
+<div class="da" style="top:156px">
+<svg viewBox="0 0 1328 590" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer labels -->
+  <text x="120" y="30" text-anchor="middle" font-family="'Jost'" font-size="10" letter-spacing="3" fill="#5A5550">ENTRADA</text>
+  <text x="350" y="30" text-anchor="middle" font-family="'Jost'" font-size="10" letter-spacing="3" fill="#5A5550">CAMADA 1</text>
+  <text x="580" y="30" text-anchor="middle" font-family="'Jost'" font-size="10" letter-spacing="3" fill="#5A5550">CAMADA 2</text>
+  <text x="810" y="30" text-anchor="middle" font-family="'Jost'" font-size="10" letter-spacing="3" fill="#5A5550">CAMADA 3</text>
+  <text x="1040" y="30" text-anchor="middle" font-family="'Jost'" font-size="10" letter-spacing="3" fill="#C9A02A">CAMADA N...</text>
+  <text x="1230" y="30" text-anchor="middle" font-family="'Jost'" font-size="10" letter-spacing="3" fill="#5A5550">SAÍDA</text>
+
+  <!-- Conexões entre camadas (linhas finas) -->
+  <!-- Input(3) → Layer1(5) -->
+  <g opacity=".2" stroke="#1A3A6A" stroke-width="1">
+    <line x1="120" y1="130" x2="350" y2="100"/><line x1="120" y1="130" x2="350" y2="198"/><line x1="120" y1="130" x2="350" y2="296"/><line x1="120" y1="130" x2="350" y2="394"/><line x1="120" y1="130" x2="350" y2="492"/>
+    <line x1="120" y1="295" x2="350" y2="100"/><line x1="120" y1="295" x2="350" y2="198"/><line x1="120" y1="295" x2="350" y2="296"/><line x1="120" y1="295" x2="350" y2="394"/><line x1="120" y1="295" x2="350" y2="492"/>
+    <line x1="120" y1="460" x2="350" y2="100"/><line x1="120" y1="460" x2="350" y2="198"/><line x1="120" y1="460" x2="350" y2="296"/><line x1="120" y1="460" x2="350" y2="394"/><line x1="120" y1="460" x2="350" y2="492"/>
+  </g>
+  <!-- Layer1(5) → Layer2(5) -->
+  <g opacity=".15" stroke="#2E7C7A" stroke-width="1">
+    <line x1="350" y1="100" x2="580" y2="100"/><line x1="350" y1="100" x2="580" y2="198"/><line x1="350" y1="100" x2="580" y2="296"/><line x1="350" y1="100" x2="580" y2="394"/><line x1="350" y1="100" x2="580" y2="492"/>
+    <line x1="350" y1="198" x2="580" y2="100"/><line x1="350" y1="198" x2="580" y2="198"/><line x1="350" y1="198" x2="580" y2="296"/><line x1="350" y1="198" x2="580" y2="394"/><line x1="350" y1="198" x2="580" y2="492"/>
+    <line x1="350" y1="296" x2="580" y2="100"/><line x1="350" y1="296" x2="580" y2="198"/><line x1="350" y1="296" x2="580" y2="296"/><line x1="350" y1="296" x2="580" y2="394"/><line x1="350" y1="296" x2="580" y2="492"/>
+    <line x1="350" y1="394" x2="580" y2="100"/><line x1="350" y1="394" x2="580" y2="198"/><line x1="350" y1="394" x2="580" y2="296"/><line x1="350" y1="394" x2="580" y2="394"/><line x1="350" y1="394" x2="580" y2="492"/>
+    <line x1="350" y1="492" x2="580" y2="100"/><line x1="350" y1="492" x2="580" y2="198"/><line x1="350" y1="492" x2="580" y2="296"/><line x1="350" y1="492" x2="580" y2="394"/><line x1="350" y1="492" x2="580" y2="492"/>
+  </g>
+  <!-- Layer2 → Layer3 (same pattern, teal) -->
+  <g opacity=".15" stroke="#C9A02A" stroke-width="1">
+    <line x1="580" y1="100" x2="810" y2="100"/><line x1="580" y1="100" x2="810" y2="198"/><line x1="580" y1="100" x2="810" y2="296"/><line x1="580" y1="100" x2="810" y2="394"/><line x1="580" y1="100" x2="810" y2="492"/>
+    <line x1="580" y1="296" x2="810" y2="100"/><line x1="580" y1="296" x2="810" y2="198"/><line x1="580" y1="296" x2="810" y2="296"/><line x1="580" y1="296" x2="810" y2="394"/><line x1="580" y1="296" x2="810" y2="492"/>
+    <line x1="580" y1="492" x2="810" y2="100"/><line x1="580" y1="492" x2="810" y2="296"/><line x1="580" y1="492" x2="810" y2="492"/>
+  </g>
+  <!-- Layer3 → LayerN (reticências) -->
+  <g opacity=".12" stroke="#BF3728" stroke-width="1">
+    <line x1="810" y1="100" x2="1040" y2="150"/><line x1="810" y1="198" x2="1040" y2="250"/><line x1="810" y1="296" x2="1040" y2="295"/><line x1="810" y1="394" x2="1040" y2="340"/><line x1="810" y1="492" x2="1040" y2="440"/>
+  </g>
+  <!-- LayerN → Output -->
+  <g opacity=".2" stroke="#BF3728" stroke-width="1.5">
+    <line x1="1040" y1="150" x2="1230" y2="247"/><line x1="1040" y1="250" x2="1230" y2="247"/><line x1="1040" y1="295" x2="1230" y2="247"/><line x1="1040" y1="340" x2="1230" y2="247"/><line x1="1040" y1="440" x2="1230" y2="247"/>
+  </g>
+
+  <!-- Neurônios entrada -->
+  <circle cx="120" cy="130" r="28" fill="white" stroke="#1A3A6A" stroke-width="2.5"/>
+  <text x="120" y="126" text-anchor="middle" font-family="'Jost'" font-size="9" fill="#1A3A6A">token</text>
+  <text x="120" y="139" text-anchor="middle" font-family="'Jost'" font-size="9" fill="#1A3A6A">"IA"</text>
+  <circle cx="120" cy="295" r="28" fill="white" stroke="#1A3A6A" stroke-width="2.5"/>
+  <text x="120" y="291" text-anchor="middle" font-family="'Jost'" font-size="9" fill="#1A3A6A">token</text>
+  <text x="120" y="304" text-anchor="middle" font-family="'Jost'" font-size="9" fill="#1A3A6A">"e"</text>
+  <circle cx="120" cy="460" r="28" fill="white" stroke="#1A3A6A" stroke-width="2.5"/>
+  <text x="120" y="456" text-anchor="middle" font-family="'Jost'" font-size="9" fill="#1A3A6A">token</text>
+  <text x="120" y="469" text-anchor="middle" font-family="'Jost'" font-size="9" fill="#1A3A6A">"agora"</text>
+
+  <!-- Neurônios L1 -->
+  <circle cx="350" cy="100" r="22" fill="#2E7C7A" opacity=".7"/><circle cx="350" cy="198" r="22" fill="#2E7C7A" opacity=".5"/><circle cx="350" cy="296" r="22" fill="#2E7C7A" opacity=".9"/>
+  <circle cx="350" cy="394" r="22" fill="#2E7C7A" opacity=".4"/><circle cx="350" cy="492" r="22" fill="#2E7C7A" opacity=".6"/>
+  <!-- peso labels L1 -->
+  <text x="350" y="100" text-anchor="middle" dominant-baseline="middle" font-family="'Jost'" font-size="9" fill="white">w=.8</text>
+  <text x="350" y="198" text-anchor="middle" dominant-baseline="middle" font-family="'Jost'" font-size="9" fill="white">w=.3</text>
+  <text x="350" y="296" text-anchor="middle" dominant-baseline="middle" font-family="'Jost'" font-size="9" fill="white">w=.9</text>
+  <text x="350" y="394" text-anchor="middle" dominant-baseline="middle" font-family="'Jost'" font-size="9" fill="white">w=.1</text>
+  <text x="350" y="492" text-anchor="middle" dominant-baseline="middle" font-family="'Jost'" font-size="9" fill="white">w=.5</text>
+
+  <!-- Neurônios L2 -->
+  <circle cx="580" cy="100" r="22" fill="#C9A02A" opacity=".6"/><circle cx="580" cy="198" r="22" fill="#C9A02A" opacity=".8"/><circle cx="580" cy="296" r="22" fill="#C9A02A" opacity=".4"/>
+  <circle cx="580" cy="394" r="22" fill="#C9A02A" opacity=".7"/><circle cx="580" cy="492" r="22" fill="#C9A02A" opacity=".5"/>
+
+  <!-- Neurônios L3 -->
+  <circle cx="810" cy="100" r="22" fill="#BF3728" opacity=".4"/><circle cx="810" cy="198" r="22" fill="#BF3728" opacity=".7"/><circle cx="810" cy="296" r="22" fill="#BF3728" opacity=".9"/>
+  <circle cx="810" cy="394" r="22" fill="#BF3728" opacity=".5"/><circle cx="810" cy="492" r="22" fill="#BF3728" opacity=".3"/>
+
+  <!-- Reticências -->
+  <text x="1040" y="290" text-anchor="middle" font-family="'Jost'" font-size="22" fill="#C9A02A" opacity=".8">· · ·</text>
+  <text x="1040" y="320" text-anchor="middle" font-family="'Jost'" font-size="10" fill="#5A5550" letter-spacing="2">N CAMADAS</text>
+
+  <!-- Neurônio saída -->
+  <circle cx="1230" cy="247" r="38" fill="white" stroke="#BF3728" stroke-width="3"/>
+  <text x="1230" y="241" text-anchor="middle" font-family="'Jost'" font-size="10" fill="#BF3728">próxima</text>
+  <text x="1230" y="256" text-anchor="middle" font-family="'Jost'" font-size="10" fill="#BF3728">palavra</text>
+
+  <!-- Legenda pesos -->
+  <rect x="56" y="530" width="14" height="14" fill="#2E7C7A"/><text x="78" y="542" font-family="'Jost'" font-size="11" fill="#5A5550">pesos aprendidos no treino</text>
+  <rect x="260" y="530" width="14" height="14" fill="#C9A02A"/><text x="282" y="542" font-family="'Jost'" font-size="11" fill="#5A5550">ativações (valores entre 0 e 1)</text>
+  <rect x="500" y="530" width="14" height="14" fill="#BF3728"/><text x="522" y="542" font-family="'Jost'" font-size="11" fill="#5A5550">representações abstratas emergentes</text>
+  <text x="800" y="542" font-family="'Jost'" font-size="11" fill="#5A5550">a saída é sempre uma <tspan font-style="italic">distribuição de probabilidades</tspan> — não uma "resposta"</text>
+</svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S16 ILUSTRAÇÃO TOKEN PREDICTION ═══════════════════════ -->
+<div class="slide cr dg" id="s16">
+<div class="rl" id="rl16"></div><div class="fr"></div>
+<div class="lb">ILUSTRAÇÃO · O QUE A IA FAZ COM A LINGUAGEM</div>
+<div class="dt">a IA não lê — ela prevê o token mais provável, um por um</div>
+<div class="da" style="top:162px">
+<svg viewBox="0 0 1328 580" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Frase de entrada -->
+  <text x="56" y="46" font-family="'Playfair Display'" font-size="20" fill="#1A1A1A" font-style="italic">frase de entrada:</text>
+
+  <!-- Tokens -->
+  <rect x="56" y="62" width="98" height="44" rx="4" fill="white" stroke="#1A3A6A" stroke-width="2"/>
+  <text x="105" y="89" text-anchor="middle" font-family="'Jost'" font-size="15" fill="#1A3A6A">A</text>
+
+  <rect x="166" y="62" width="98" height="44" rx="4" fill="white" stroke="#1A3A6A" stroke-width="2"/>
+  <text x="215" y="89" text-anchor="middle" font-family="'Jost'" font-size="15" fill="#1A3A6A">capital</text>
+
+  <rect x="276" y="62" width="98" height="44" rx="4" fill="white" stroke="#1A3A6A" stroke-width="2"/>
+  <text x="325" y="89" text-anchor="middle" font-family="'Jost'" font-size="15" fill="#1A3A6A">do</text>
+
+  <rect x="386" y="62" width="120" height="44" rx="4" fill="white" stroke="#1A3A6A" stroke-width="2"/>
+  <text x="446" y="89" text-anchor="middle" font-family="'Jost'" font-size="15" fill="#1A3A6A">Brasil</text>
+
+  <rect x="518" y="62" width="60" height="44" rx="4" fill="white" stroke="#1A3A6A" stroke-width="2"/>
+  <text x="548" y="89" text-anchor="middle" font-family="'Jost'" font-size="15" fill="#1A3A6A">é</text>
+
+  <rect x="590" y="62" width="72" height="44" rx="4" fill="#EDE8D4" stroke="#BF3728" stroke-width="2.5" stroke-dasharray="5 3"/>
+  <text x="626" y="89" text-anchor="middle" font-family="'Jost'" font-size="13" fill="#BF3728">???</text>
+
+  <!-- seta tokens → vetores -->
+  <text x="680" y="68" font-family="'Jost'" font-size="10" fill="#5A5550" letter-spacing="2">cada token vira</text>
+  <text x="680" y="83" font-family="'Jost'" font-size="10" fill="#5A5550" letter-spacing="2">um vetor numérico</text>
+  <text x="700" y="100" font-family="'Jost'" font-size="18" fill="#C9A02A">→</text>
+
+  <!-- Vetores -->
+  <rect x="730" y="58" width="200" height="52" rx="3" fill="rgba(26,58,106,.06)" stroke="rgba(26,58,106,.25)" stroke-width="1"/>
+  <text x="742" y="80" font-family="'Jost'" font-size="11" fill="#1A3A6A">[0.82, -0.31, 0.54, 0.12, ...</text>
+  <text x="742" y="98" font-family="'Jost'" font-size="11" fill="#1A3A6A">0.77, -0.09, 0.43, 0.66]</text>
+
+  <text x="942" y="90" font-family="'Jost'" font-size="13" fill="#5A5550" letter-spacing="1">× bilhões de parâmetros</text>
+  <text x="942" y="108" font-family="'Jost'" font-size="13" fill="#5A5550" letter-spacing="1">na rede neural</text>
+
+  <!-- Seta para distribuição de probabilidade -->
+  <line x1="664" y1="130" x2="664" y2="158" stroke="#C9A02A" stroke-width="2" marker-end="url(#arrG)"/>
+  <defs><marker id="arrG" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#C9A02A"/></marker></defs>
+  <text x="680" y="150" font-family="'Jost'" font-size="10" fill="#5A5550" letter-spacing="2">distribuição de probabilidade para o próximo token</text>
+
+  <!-- Barra chart (probabilidades) -->
+  <!-- Brasília -->
+  <rect x="56" y="174" width="660" height="36" rx="3" fill="#2E7C7A"/>
+  <text x="72" y="197" font-family="'Jost'" font-size="14" fill="white">Brasília</text>
+  <text x="728" y="197" font-family="'Jost'" font-size="14" fill="#1A1A1A" font-weight="500">94.2%</text>
+
+  <rect x="56" y="218" width="140" height="30" rx="3" fill="#C9A02A" opacity=".7"/>
+  <text x="72" y="238" font-family="'Jost'" font-size="12" fill="white">Rio de Janeiro</text>
+  <text x="204" y="238" font-family="'Jost'" font-size="12" fill="#1A1A1A">3.1%</text>
+
+  <rect x="56" y="256" width="70" height="26" rx="3" fill="#BF3728" opacity=".5"/>
+  <text x="72" y="274" font-family="'Jost'" font-size="12" fill="white">São Paulo</text>
+  <text x="134" y="274" font-family="'Jost'" font-size="12" fill="#1A1A1A">1.4%</text>
+
+  <rect x="56" y="290" width="28" height="22" rx="3" fill="#5A5550" opacity=".4"/>
+  <text x="92" y="306" font-family="'Jost'" font-size="11" fill="#5A5550">outros — 1.3%</text>
+
+  <!-- Seleção do mais provável -->
+  <rect x="820" y="174" width="460" height="148" rx="6" fill="none" stroke="#2E7C7A" stroke-width="2"/>
+  <text x="840" y="200" font-family="'Jost'" font-size="11" fill="#5A5550" letter-spacing="3">RESULTADO</text>
+  <text x="840" y="236" font-family="'Playfair Display'" font-size="36" fill="#1A1A1A">Brasília</text>
+  <text x="840" y="268" font-family="'Jost'" font-size="12" fill="#5A5550">token de maior probabilidade selecionado</text>
+  <text x="840" y="288" font-family="'Jost'" font-size="12" fill="#5A5550">e adicionado à sequência</text>
+  <text x="840" y="308" font-family="'Jost'" font-size="11" fill="#BF3728">processo se repete token a token, sem pausa</text>
+
+  <!-- Caixa chave -->
+  <rect x="56" y="360" width="1216" height="72" rx="5" fill="rgba(191,55,40,.06)" stroke="rgba(191,55,40,.25)" stroke-width="1"/>
+  <text x="80" y="390" font-family="'Jost'" font-size="13" fill="#BF3728" letter-spacing="2">CONSEQUÊNCIA:</text>
+  <text x="80" y="414" font-family="'Jost'" font-size="14" fill="#1A1A1A">a IA nunca "sabe" a resposta — ela calcula que "Brasília" é estatisticamente o que mais aparece após "A capital do Brasil é"</text>
+  <text x="80" y="434" font-family="'Jost'" font-size="14" fill="#5A5550">no corpus de treinamento. A resposta "correta" é acidente de frequência, não de compreensão.</text>
+
+  <!-- Exemplo extra: alucinação -->
+  <rect x="56" y="456" width="580" height="66" rx="5" fill="rgba(201,160,42,.08)" stroke="rgba(201,160,42,.4)" stroke-width="1"/>
+  <text x="78" y="482" font-family="'Jost'" font-size="12" fill="#C9A02A" letter-spacing="2">POR QUE A IA "ALUCINA"?</text>
+  <text x="78" y="502" font-family="'Jost'" font-size="13" fill="#1A1A1A">Se um autor fictício soa frequente no padrão, a IA gera</text>
+  <text x="78" y="518" font-family="'Jost'" font-size="13" fill="#1A1A1A">sua obra — porque a forma é estatisticamente plausível.</text>
+
+  <rect x="660" y="456" width="612" height="66" rx="5" fill="rgba(46,124,122,.08)" stroke="rgba(46,124,122,.4)" stroke-width="1"/>
+  <text x="682" y="482" font-family="'Jost'" font-size="12" fill="#2E7C7A" letter-spacing="2">O QUE A IA NÃO ACESSA</text>
+  <text x="682" y="502" font-family="'Jost'" font-size="13" fill="#1A1A1A">a realidade ontológica do mundo — apenas</text>
+  <text x="682" y="518" font-family="'Jost'" font-size="13" fill="#1A1A1A">padrões linguísticos sobre representações do mundo.</text>
+</svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S17 SEÇÃO 05 ═══════════════════════ -->
+<div class="slide dk se" id="s17">
+<div class="rl" id="rl17"></div>
+<div class="sn">§ 05</div>
+<div class="st">IA: método<br><em>indutivo cristalizado</em></div>
+<div class="ss">Hume, Popper e a ditadura do passado</div>
+<div class="sr">
+  <svg width="52" height="26"><path d="M0 26 A26 26 0 0 1 52 26Z" fill="#BF3728"/></svg>
+  <svg width="52" height="52"><circle cx="26" cy="26" r="24" fill="none" stroke="#2E7C7A" stroke-width="5.5"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S18 ILUSTRAÇÃO INDUÇÃO VS H-D ═══════════════════════ -->
+<div class="slide cr dg" id="s18">
+<div class="rl" id="rl18"></div><div class="fr"></div>
+<div class="lb">ILUSTRAÇÃO · MÉTODOS CIENTÍFICOS</div>
+<div class="dt">indução (IA) × hipotético-dedutivo (ciência) — não é o mesmo</div>
+<div class="da" style="top:158px;display:flex;gap:40px">
+
+  <!-- INDUÇÃO (IA) -->
+  <div style="flex:1;display:flex;flex-direction:column;gap:0;background:rgba(201,160,42,.05);border:2px solid #C9A02A;padding:26px 24px">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#C9A02A;margin-bottom:18px">INDUÇÃO · O QUE A IA FAZ</div>
+    <svg viewBox="0 0 540 340" style="width:100%;flex:1">
+      <!-- Pontos de dados espalhados -->
+      <g fill="#C9A02A" opacity=".7">
+        <circle cx="80" cy="280" r="6"/><circle cx="130" cy="240" r="6"/><circle cx="160" cy="260" r="6"/>
+        <circle cx="210" cy="200" r="6"/><circle cx="250" cy="215" r="6"/><circle cx="290" cy="180" r="6"/>
+        <circle cx="330" cy="155" r="6"/><circle cx="380" cy="140" r="6"/><circle cx="420" cy="120" r="6"/>
+        <circle cx="110" cy="300" r="4"/><circle cx="190" cy="230" r="4"/><circle cx="270" cy="195" r="4"/>
+        <circle cx="350" cy="165" r="4"/><circle cx="440" cy="110" r="4"/>
+      </g>
+      <!-- Linha de tendência -->
+      <line x1="60" y1="305" x2="480" y2="85" stroke="#C9A02A" stroke-width="2.5"/>
+      <!-- Seta para "FUTURO" -->
+      <line x1="460" y1="93" x2="520" y2="60" stroke="#1A1A1A" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrF)"/>
+      <defs><marker id="arrF" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#1A1A1A"/></marker></defs>
+      <text x="490" y="52" font-family="'Jost'" font-size="11" fill="#5A5550">FUTURO</text>
+      <!-- Eixos -->
+      <line x1="56" y1="310" x2="536" y2="310" stroke="#5A5550" stroke-width="1" opacity=".4"/>
+      <line x1="56" y1="40" x2="56" y2="310" stroke="#5A5550" stroke-width="1" opacity=".4"/>
+      <text x="300" y="330" text-anchor="middle" font-family="'Jost'" font-size="10" fill="#5A5550">dados observados (passado)</text>
+      <text x="36" y="180" font-family="'Jost'" font-size="10" fill="#5A5550" transform="rotate(-90,36,180)">padrão</text>
+    </svg>
+    <div style="font-size:13px;color:#5A5550;border-top:1px solid rgba(201,160,42,.3);padding-top:12px;line-height:1.55">
+      Parte de observações particulares → generaliza → prevê.<br>
+      Hume: não há fundamento racional — apenas hábito.<br>
+      <span style="color:#BF3728;font-weight:500">Problema: cristaliza o passado, não cria o novo.</span>
+    </div>
+  </div>
+
+  <!-- VS -->
+  <div style="display:flex;align-items:center;font-size:20px;color:#5A5550;flex-shrink:0;font-style:italic;font-family:'Playfair Display'">vs</div>
+
+  <!-- HIPOTÉTICO-DEDUTIVO -->
+  <div style="flex:1;display:flex;flex-direction:column;gap:0;background:rgba(46,124,122,.05);border:2px solid #2E7C7A;padding:26px 24px">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#2E7C7A;margin-bottom:18px">HIPOTÉTICO-DEDUTIVO · O QUE O PESQUISADOR FAZ</div>
+    <svg viewBox="0 0 540 340" style="width:100%;flex:1">
+      <!-- Ciclo H-D -->
+      <defs><marker id="arrHD" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#2E7C7A"/></marker></defs>
+
+      <!-- Caixas -->
+      <rect x="170" y="20" width="200" height="50" rx="4" fill="#2E7C7A"/>
+      <text x="270" y="45" text-anchor="middle" font-family="'Jost'" font-size="13" fill="white">HIPÓTESE</text>
+      <text x="270" y="60" text-anchor="middle" font-family="'Jost'" font-size="10" fill="rgba(255,255,255,.7)">dedução de consequências testáveis</text>
+
+      <rect x="380" y="130" width="140" height="50" rx="4" fill="rgba(46,124,122,.2)" stroke="#2E7C7A" stroke-width="1.5"/>
+      <text x="450" y="153" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#1A1A1A">TESTE</text>
+      <text x="450" y="169" text-anchor="middle" font-family="'Jost'" font-size="10" fill="#5A5550">experimento</text>
+
+      <rect x="300" y="250" width="170" height="50" rx="4" fill="#BF3728" opacity=".9"/>
+      <text x="385" y="273" text-anchor="middle" font-family="'Jost'" font-size="12" fill="white">REFUTAÇÃO</text>
+      <text x="385" y="289" text-anchor="middle" font-family="'Jost'" font-size="10" fill="rgba(255,255,255,.7)">Popper: ciência avança aqui</text>
+
+      <rect x="56" y="250" width="180" height="50" rx="4" fill="rgba(46,124,122,.8)"/>
+      <text x="146" y="273" text-anchor="middle" font-family="'Jost'" font-size="12" fill="white">CONFIRMAÇÃO</text>
+      <text x="146" y="289" text-anchor="middle" font-family="'Jost'" font-size="10" fill="rgba(255,255,255,.7)">provisória — sempre falseável</text>
+
+      <!-- Setas -->
+      <path d="M 370 45 Q 450 45 450 130" fill="none" stroke="#2E7C7A" stroke-width="1.5" marker-end="url(#arrHD)"/>
+      <path d="M 450 180 Q 450 250 470 250" fill="none" stroke="#BF3728" stroke-width="1.5" marker-end="url(#arrHD)"/>
+      <path d="M 300 275 Q 240 275 236 275" fill="none" stroke="#2E7C7A" stroke-width="1.5" marker-end="url(#arrHD)"/>
+      <path d="M 146 250 Q 146 70 170 50" fill="none" stroke="#2E7C7A" stroke-width="1.5" marker-end="url(#arrHD)"/>
+
+      <!-- Texto NOVA HIPÓTESE -->
+      <text x="90" y="170" font-family="'Jost'" font-size="11" fill="#2E7C7A">nova hipótese</text>
+      <text x="90" y="185" font-family="'Jost'" font-size="11" fill="#2E7C7A">refinada</text>
+    </svg>
+    <div style="font-size:13px;color:#5A5550;border-top:1px solid rgba(46,124,122,.3);padding-top:12px;line-height:1.55">
+      Propõe hipótese → deduz consequências → testa → refuta ou refina.<br>
+      Humano: o salto criativo da hipótese não está nos dados anteriores.<br>
+      <span style="color:#2E7C7A;font-weight:500">A ciência avança pela falsificação — não pela confirmação.</span>
+    </div>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S19 CITAÇÃO HUME ═══════════════════════ -->
+<div class="slide cr cb" id="s19">
+<div class="rl" id="rl19"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm">"</div>
+<div class="qt" style="font-size:40px">a indução não tem fundamento racional — ela se apoia no costume, no <em>hábito de esperar que o futuro imite o passado.</em></div>
+<div class="qa">DAVID HUME · INVESTIGAÇÃO SOBRE O ENTENDIMENTO HUMANO (1748)</div>
+<div class="dc"><svg width="96" height="96"><circle cx="48" cy="48" r="44" fill="none" stroke="#C9A02A" stroke-width="3.5"/><circle cx="48" cy="48" r="26" fill="none" stroke="#C9A02A" stroke-width="2" opacity=".4"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S20 DITADURA DO PASSADO ═══════════════════════ -->
+<div class="slide cr cb" id="s20">
+<div class="rl" id="rl20"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm" style="color:var(--navy)">"</div>
+<div class="qt" style="font-size:38px;right:340px">o aprendizado de máquina <em>automatiza a ditadura do passado</em> — de taxonomias e padrões comportamentais do passado sobre o presente.</div>
+<div class="qa">PASQUINELLI &amp; JOLER (2021)</div>
+<div class="dc" style="right:60px"><svg width="84" height="84"><rect width="84" height="84" fill="rgba(26,58,106,.12)"/><rect x="8" y="8" width="68" height="68" fill="none" stroke="#1A3A6A" stroke-width="2"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S21 SEÇÃO 06 ALERTA HUMANISTA ═══════════════════════ -->
+<div class="slide dk se" id="s21">
+<div class="rl" id="rl21"></div>
+<div class="sn">§ 06</div>
+<div class="st">o alerta<br><em>humanista</em></div>
+<div class="ss">Magnifica Humanitas (2026) — ética, técnica e a mudança de época</div>
+<div class="sr">
+  <svg width="52" height="52"><circle cx="26" cy="26" r="26" fill="#BF3728"/></svg>
+  <svg width="52" height="26"><path d="M0 26 A26 26 0 0 1 52 26Z" fill="#C9A02A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S22 MAGNIFICA HUMANITAS ═══════════════════════ -->
+<div class="slide cr ca" id="s22">
+<div class="rl" id="rl22"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · A · DUAS COLUNAS</div>
+<div class="ct">Magnifica Humanitas (2026): nosso tempo é uma "mudança de época"</div>
+<div class="cls">
+  <div class="cl rd">
+    <div class="cl-lb">O PARADIGMA TECNOCRÁTICO</div>
+    <ul>
+      <li>lógica da eficiência imposta sobre o humano</li>
+      <li>domínio da técnica como valor em si mesmo</li>
+      <li>a IA acelera esse paradigma sem consciência ética</li>
+      <li>a máquina não vive experiências nem possui consciência moral</li>
+    </ul>
+  </div>
+  <div class="cl bl">
+    <div class="cl-lb">O CONVITE</div>
+    <ul>
+      <li>usar a ciência para reconstruir comunidade</li>
+      <li>resistir à Síndrome de Babel: homogeneizar é desumanizar</li>
+      <li>a pessoa humana não se reduz a dados</li>
+      <li>a máquina apenas simula a linguagem — não a vive</li>
+    </ul>
+  </div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S23 BABEL ═══════════════════════ -->
+<div class="slide cr cb" id="s23">
+<div class="rl" id="rl23"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm">"</div>
+<div class="qt" style="font-size:38px">o grande risco é a Síndrome de Babel: um projeto de homogeneização que tenta <em>traduzir todo o mistério da pessoa humana em dados.</em></div>
+<div class="qa">LEÃO XIV · MAGNIFICA HUMANITAS (2026)</div>
+<div class="dc" style="right:70px"><svg width="96" height="96"><rect x="0" y="0" width="44" height="44" fill="#BF3728" opacity=".6"/><rect x="52" y="0" width="44" height="44" fill="#BF3728" opacity=".3"/><rect x="0" y="52" width="44" height="44" fill="#BF3728" opacity=".3"/><rect x="52" y="52" width="44" height="44" fill="#BF3728" opacity=".15"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S24 SEÇÃO 07 PESQUISAR ═══════════════════════ -->
+<div class="slide dk se" id="s24">
+<div class="rl" id="rl24"></div>
+<div class="sn">§ 07</div>
+<div class="st">o ato de<br><em>pesquisar</em></div>
+<div class="ss">da pergunta ao público — o que a IA desloca nesse percurso</div>
+<div class="sr">
+  <svg width="52" height="52"><circle cx="26" cy="26" r="25" fill="#BF3728"/></svg>
+  <svg width="52" height="52"><circle cx="26" cy="26" r="23" fill="none" stroke="#2E7C7A" stroke-width="5"/></svg>
+  <svg width="52" height="52"><circle cx="14" cy="40" r="12" fill="#2E7C7A"/><circle cx="40" cy="40" r="12" fill="#2E7C7A"/><circle cx="26" cy="16" r="12" fill="#2E7C7A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- ═══════════════════════ S25 DIAGRAMA PESQUISAR ═══════════════════════ -->
+<div class="slide cr dg" id="s25">
+<div class="rl" id="rl25"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · D · DIAGRAMA</div>
+<div class="dt">a pesquisa: da pergunta ao público</div>
+<div class="ds">cinco estações, várias voltas — a IA entra no meio e desloca tudo.</div>
+<div class="da" style="top:194px">
+<svg viewBox="0 0 1328 490" style="width:100%;height:100%">
+  <!-- Linha dashed -->
+  <line x1="160" y1="200" x2="1168" y2="200" stroke="rgba(0,0,0,.18)" stroke-width="1.5" stroke-dasharray="8 5"/>
+
+  <!-- Nó 1: PERGUNTA -->
+  <circle cx="160" cy="200" r="70" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+  <circle cx="160" cy="200" r="28" fill="#BF3728"/>
+  <text x="160" y="284" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">PERGUNTA</text>
+  <text x="160" y="298" text-anchor="middle" font-family="'Jost'" font-size="8" fill="rgba(90,85,80,.6)">01</text>
+  <text x="160" y="328" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">o que me move</text>
+  <text x="160" y="344" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">o que não sei</text>
+  <text x="160" y="360" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">o recorte possível</text>
+
+  <!-- Nó 2: DADO/CORPUS -->
+  <circle cx="424" cy="200" r="70" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+  <g transform="translate(408,184)"><rect x="0" y="0" width="9" height="9" fill="#C9A02A"/><rect x="12" y="0" width="9" height="9" fill="#C9A02A"/><rect x="24" y="0" width="9" height="9" fill="#C9A02A"/><rect x="0" y="12" width="9" height="9" fill="#C9A02A"/><rect x="12" y="12" width="9" height="9" fill="#C9A02A"/><rect x="24" y="12" width="9" height="9" fill="#C9A02A"/><rect x="0" y="24" width="9" height="9" fill="#C9A02A"/><rect x="12" y="24" width="9" height="9" fill="#C9A02A"/><rect x="24" y="24" width="9" height="9" fill="#C9A02A"/></g>
+  <text x="424" y="284" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">DADO</text>
+  <text x="424" y="298" text-anchor="middle" font-family="'Jost'" font-size="8" fill="rgba(90,85,80,.6)">02</text>
+  <text x="424" y="328" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">corpus, campo</text>
+  <text x="424" y="344" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">fontes, arquivo</text>
+  <text x="424" y="360" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">matéria incerta</text>
+
+  <!-- Nó 3: MÁQUINA -->
+  <circle cx="664" cy="200" r="70" fill="none" stroke="#1A3A6A" stroke-width="2.5"/>
+  <rect x="638" y="174" width="52" height="52" fill="#1A3A6A"/>
+  <text x="664" y="284" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#1A3A6A" font-weight="500">MÁQUINA</text>
+  <text x="664" y="298" text-anchor="middle" font-family="'Jost'" font-size="8" fill="rgba(26,58,106,.7)">03</text>
+  <text x="664" y="328" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">IA entra aqui</text>
+  <text x="664" y="344" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">e volta à pergunta</text>
+  <text x="664" y="360" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#1A3A6A">desloca tudo</text>
+
+  <!-- Nó 4: ANÁLISE/ESCRITA -->
+  <circle cx="904" cy="200" r="70" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+  <path d="M 868 228 A 36 36 0 0 1 940 228 Z" fill="#BF3728"/>
+  <text x="904" y="284" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">ANÁLISE</text>
+  <text x="904" y="298" text-anchor="middle" font-family="'Jost'" font-size="8" fill="rgba(90,85,80,.6)">04</text>
+  <text x="904" y="328" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">interpretação</text>
+  <text x="904" y="344" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">escrita, forma</text>
+  <text x="904" y="360" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">o achado sensível</text>
+
+  <!-- Nó 5: PÚBLICO -->
+  <circle cx="1168" cy="200" r="70" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+  <circle cx="1148" cy="214" r="14" fill="#2E7C7A"/><circle cx="1188" cy="214" r="14" fill="#2E7C7A"/><circle cx="1168" cy="188" r="14" fill="#2E7C7A"/>
+  <text x="1168" y="284" text-anchor="middle" font-family="'Jost'" font-size="9" letter-spacing="3" fill="#5A5550">PÚBLICO</text>
+  <text x="1168" y="298" text-anchor="middle" font-family="'Jost'" font-size="8" fill="rgba(90,85,80,.6)">05</text>
+  <text x="1168" y="328" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">destino</text>
+  <text x="1168" y="344" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">devolutiva</text>
+  <text x="1168" y="360" text-anchor="middle" font-family="'Jost'" font-size="12" fill="#5A5550">comunidade</text>
+
+  <!-- Seta de retorno da Máquina para Pergunta -->
+  <path d="M 664 130 Q 664 70 160 130" fill="none" stroke="#1A3A6A" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#arrRet)"/>
+  <defs><marker id="arrRet" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#1A3A6A"/></marker></defs>
+  <text x="412" y="62" text-anchor="middle" font-family="'Jost'" font-size="11" fill="#1A3A6A">a IA volta para a pergunta inicial — deslocando o que pensávamos saber</te</svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S26 SEÇÃO 08 IAEAGORA -->
+<div class="slide dk se" id="s26">
+<div class="rl" id="rl26"></div>
+<div class="sn">§ 08</div>
+<div class="st"><em>iaeagora</em><br>o jogo</div>
+<div class="ss">cinco casos para o debate em roda</div>
+<div class="sr">
+  <svg width="52" height="52"><circle cx="26" cy="26" r="26" fill="#BF3728"/></svg>
+  <svg width="52" height="52"><rect x="0" y="0" width="13" height="13" fill="#C9A02A"/><rect x="20" y="0" width="13" height="13" fill="#C9A02A"/><rect x="39" y="0" width="13" height="13" fill="#C9A02A"/><rect x="0" y="20" width="13" height="13" fill="#C9A02A"/><rect x="20" y="20" width="13" height="13" fill="#C9A02A"/><rect x="39" y="20" width="13" height="13" fill="#C9A02A"/><rect x="0" y="39" width="13" height="13" fill="#C9A02A"/><rect x="20" y="39" width="13" height="13" fill="#C9A02A"/><rect x="39" y="39" width="13" height="13" fill="#C9A02A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S27 CASO 01 -->
+<div class="slide cr ca" id="s27">
+<div class="rl" id="rl27"></div><div class="fr"></div>
+<div class="lb">CASO 01 · ALUCINAÇÃO</div>
+<div class="ct">a referência que não existe — perfeita, detalhada e inventada</div>
+<div class="cls">
+  <div class="cl rd"><div class="cl-lb">O QUE ACONTECE</div><ul>
+    <li>IA inventa artigo com autores, ano e DOI corretos</li>
+    <li>o artigo não existe em nenhuma base de dados real</li>
+    <li>tudo soa plausível — nada é verificável</li>
+    <li>a aparência estatística da referência é perfeita</li>
+  </ul></div>
+  <div class="cl bl"><div class="cl-lb">POR QUÊ ISSO OCORRE</div><ul>
+    <li>IA opera por previsão estatística da linguagem</li>
+    <li>importa a probabilidade da forma — não a existência real</li>
+    <li>ela não tem acesso ontológico à realidade</li>
+    <li>o número que parece certo não precisa ser verdadeiro</li>
+  </ul></div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S28 CASO 02 -->
+<div class="slide cr ca" id="s28">
+<div class="rl" id="rl28"></div><div class="fr"></div>
+<div class="lb">CASO 02 · CORRELAÇÃO E CAUSALIDADE</div>
+<div class="ct">cidades com mais igrejas têm menos homicídios — padrão não é lei</div>
+<div class="cls">
+  <div class="cl gd"><div class="cl-lb">O QUE A IA ATESTA</div><ul>
+    <li>correlação estatística identificada nos dados históricos</li>
+    <li>padrão confirma a tendência com alta acurácia</li>
+    <li>resultado apresentado como achado científico válido</li>
+    <li>a máquina não pergunta: por quê?</li>
+  </ul></div>
+  <div class="cl tl"><div class="cl-lb">O QUE A CIÊNCIA EXIGE</div><ul>
+    <li>correlação não é causalidade — é apenas co-ocorrência</li>
+    <li>IA não compreende mecanismos sociais</li>
+    <li>a variável omitida explica tudo: tamanho da cidade</li>
+    <li>a teoria vem antes — sem ela, o dado não diz nada</li>
+  </ul></div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S29 CASO 03 -->
+<div class="slide cr ca" id="s29">
+<div class="rl" id="rl29"></div><div class="fr"></div>
+<div class="lb">CASO 03 · HIPÓTESE BLINDADA</div>
+<div class="ct">a hipótese que funciona para qualquer cenário — e não serve para nenhum</div>
+<div class="cls">
+  <div class="cl tl"><div class="cl-lb">A CIÊNCIA — POPPER</div><ul>
+    <li>avança tentando refutar suas próprias hipóteses</li>
+    <li>hipótese válida é a que pode ser falsificada</li>
+    <li>o rigor está na possibilidade real de erro</li>
+    <li>a ciência cresce pelos fracassos testados</li>
+  </ul></div>
+  <div class="cl rd"><div class="cl-lb">O QUE A IA FAZ</div><ul>
+    <li>foca apenas no mais provável — evita o improvável</li>
+    <li>gera hipóteses compatíveis com qualquer dado existente</li>
+    <li>não tem mecanismo de autocrítica ou falsificação</li>
+    <li>confirma — raramente questiona</li>
+  </ul></div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S30 CASO 04 -->
+<div class="slide cr ca" id="s30">
+<div class="rl" id="rl30"></div><div class="fr"></div>
+<div class="lb">CASO 04 · VIÉS DE DADOS</div>
+<div class="ct">o algoritmo diagnostica infartos só no corpo masculino</div>
+<div class="cls">
+  <div class="cl rd"><div class="cl-lb">O QUE OCORRE</div><ul>
+    <li>algoritmo treinado em dados históricos enviesados</li>
+    <li>aprende que infarto é predominantemente coisa de homem</li>
+    <li>reproduz e amplifica o preconceito estrutural existente</li>
+    <li>mulheres recebem diagnósticos incorretos ou tardios</li>
+  </ul></div>
+  <div class="cl gd"><div class="cl-lb">A RAIZ — HUME NA PRÁTICA</div><ul>
+    <li>indução herda os vieses dos dados históricos</li>
+    <li>algoritmos são fundamentalmente preconceituosos por método</li>
+    <li>o que escapou ao humano foi cristalizado na máquina</li>
+    <li>o humano pode refletir sobre o preconceito — a máquina, não</li>
+  </ul></div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S31 CASO 05 -->
+<div class="slide cr ca" id="s31">
+<div class="rl" id="rl31"></div><div class="fr"></div>
+<div class="lb">CASO 05 · INTERSUBJETIVIDADE</div>
+<div class="ct">a IA revisa e aprova seu próprio artigo — sem o outro</div>
+<div class="cls">
+  <div class="cl bl"><div class="cl-lb">O QUE ACONTECE</div><ul>
+    <li>IA gera texto → outra IA (ou a mesma) revisa</li>
+    <li>aprovação ocorre dentro do mesmo sistema de padrões</li>
+    <li>nenhuma perspectiva externa entra no processo</li>
+    <li>a autocrítica é simulada — não exercida</li>
+  </ul></div>
+  <div class="cl tl"><div class="cl-lb">O QUE O CONHECIMENTO EXIGE</div><ul>
+    <li>intersubjetividade: o outro que questiona genuinamente</li>
+    <li>dialética entre perspectivas realmente distintas</li>
+    <li>o conhecimento nasce do debate, não da validação</li>
+    <li>nas Ciências Humanas, o outro é parte do método</li>
+  </ul></div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S32 SEÇÃO 09 AUTORIA -->
+<div class="slide dk se" id="s32">
+<div class="rl" id="rl32"></div>
+<div class="sn">§ 09</div>
+<div class="st">autoria<br><em>e pensamento</em></div>
+<div class="ss">estilo, voz e a questão do genuinamente novo</div>
+<div class="sr">
+  <svg width="52" height="52"><circle cx="26" cy="26" r="24" fill="none" stroke="#2E7C7A" stroke-width="5.5"/></svg>
+  <svg width="52" height="52"><rect x="0" y="0" width="13" height="13" fill="#C9A02A"/><rect x="20" y="0" width="13" height="13" fill="#C9A02A"/><rect x="39" y="0" width="13" height="13" fill="#C9A02A"/><rect x="0" y="20" width="13" height="13" fill="#C9A02A"/><rect x="20" y="20" width="13" height="13" fill="#C9A02A"/><rect x="39" y="20" width="13" height="13" fill="#C9A02A"/><rect x="0" y="39" width="13" height="13" fill="#C9A02A"/><rect x="20" y="39" width="13" height="13" fill="#C9A02A"/><rect x="39" y="39" width="13" height="13" fill="#C9A02A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S33 AUTORIA + PENSAR -->
+<div class="slide cr ca" id="s33">
+<div class="rl" id="rl33"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · A · DUAS COLUNAS</div>
+<div class="ct">a IA imita estilos — nunca cria um. e isso levanta uma questão: ela pensa?</div>
+<div class="cls">
+  <div class="cl bl"><div class="cl-lb">O QUE É PENSAR — UMA HIPÓTESE</div><ul>
+    <li>pensar exige conectar dois elementos e chegar a um terceiro genuíno</li>
+    <li>a abdução (Peirce): criar hipótese que os dados ainda não têm</li>
+    <li>pensamento produtivo ≠ reprodutivo: gera o que não estava dado</li>
+    <li>a IA opera por reprodução estatística — sem salto criativo</li>
+    <li>se pensar é salto, a IA não pensa — simula pensamento</li>
+  </ul></div>
+  <div class="cl rd"><div class="cl-lb">O QUE A IA FAZ COM A LINGUAGEM</div><ul>
+    <li>texto fragmentado em tokens → vetores → probabilidade</li>
+    <li>gera o que mais frequentemente segue o anterior nos dados</li>
+    <li>imita estilos — o máximo que pode fazer (Arão, 2024)</li>
+    <li>estilo é o que resiste ao padrão esperado — inacessível à IA</li>
+    <li>a voz autoral é o resíduo que a estatística não captura</li>
+  </ul></div>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S34 CITAÇÃO ARÃO -->
+<div class="slide cr cb" id="s34">
+<div class="rl" id="rl34"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm">"</div>
+<div class="qt" style="font-size:40px">espantamo-nos com a capacidade da IA de copiar o estilo de um artista — mas isso é o máximo que ela pode fazer: <em>reconhecer padrões e repetir.</em></div>
+<div class="qa">CRISTIAN ARÃO · TRANS/FORM/AÇÃO (2024)</div>
+<div class="dc"><svg width="96" height="96"><circle cx="48" cy="48" r="44" fill="none" stroke="#BF3728" stroke-width="3.5"/><circle cx="48" cy="48" r="26" fill="#BF3728" opacity=".12"/><circle cx="48" cy="48" r="12" fill="#BF3728" opacity=".35"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S35 SEÇÃO CONCLUSÃO -->
+<div class="slide dk se" id="s35">
+<div class="rl" id="rl35"></div>
+<div class="sn">§ 10</div>
+<div class="st">o lugar do<br><em>pesquisador</em></div>
+<div class="ss">ciências humanas, autoria e o que só o humano faz</div>
+<div class="sr">
+  <svg width="52" height="52"><circle cx="26" cy="26" r="26" fill="#BF3728"/></svg>
+  <svg width="52" height="26"><path d="M0 26 A26 26 0 0 1 52 26Z" fill="#2E7C7A"/></svg>
+  <svg width="52" height="52"><circle cx="14" cy="40" r="12" fill="#2E7C7A"/><circle cx="40" cy="40" r="12" fill="#2E7C7A"/><circle cx="26" cy="16" r="12" fill="#2E7C7A"/></svg>
+</div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+<!-- S36 CONCLUSÃO FINAL -->
+<div class="slide cr cb" id="s36">
+<div class="rl" id="rl36"></div><div class="fr"></div>
+<div class="lb">CONTEÚDO · B · CITAÇÃO</div>
+<div class="qm">"</div>
+<div class="qt" style="font-size:42px">brigar pelo seu estilo de escrever não é vaidade — é defender que há um <em>sujeito pensante atrás da pesquisa.</em></div>
+<div class="qa">CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO (2026)</div>
+<div class="dc"><svg width="106" height="106"><circle cx="53" cy="53" r="50" fill="none" stroke="#2E7C7A" stroke-width="3.5"/><circle cx="53" cy="53" r="32" fill="#2E7C7A" opacity=".15"/><circle cx="53" cy="53" r="14" fill="#2E7C7A" opacity=".45"/></svg></div>
+<div class="ft"><span>CÍNTIA VITORINO · ENSAIO, MÁQUINA &amp; MÉTODO · UFBA · MMXXVI</span><span>27 MAI · 14h · SALA 407 · IHAC</span></div>
+</div>
+
+</div><!-- /wr -->
+
+<script>
+var total=36,cur=1;
+var NATIVE_W=1440,NATIVE_H=810;
+
+function buildRulers(){
+  for(var i=1;i<=total;i++){
+    var r=document.getElementById('rl'+i);
+    if(!r)continue;
+    var h='';for(var j=0;j<80;j++)h+='<div class="t"></div>';
+    r.innerHTML=h;
+  }
+}
+
+function scaleWr(){
+  var wr=document.getElementById('wr');
+  var navH=document.querySelector('.nav').offsetHeight||40;
+  var availW=window.innerWidth;
+  var availH=window.innerHeight-navH-10;
+  var sx=availW/NATIVE_W;
+  var sy=availH/NATIVE_H;
+  var s=Math.min(sx,sy);
+  wr.style.transform='scale('+s+')';
+  wr.style.transformOrigin='top left';
+  var scaledW=NATIVE_W*s;
+  var ml=Math.max(0,(availW-scaledW)/2);
+  wr.style.marginLeft=ml+'px';
+  wr.style.marginTop='4px';
+}
+
+function show(n){
+  if(n<1)n=1;if(n>total)n=total;
+  document.querySelectorAll('.slide').forEach(function(s){s.classList.remove('active')});
+  var el=document.getElementById('s'+n);
+  if(el)el.classList.add('active');
+  cur=n;
+  document.getElementById('ctr').textContent=(n<10?'0'+n:n)+' / '+(total<10?'0'+total:total);
+}
+
+function next(){show(cur+1)}
+function prev(){show(cur-1)}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')next();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')prev();
+});
+window.addEventListener('resize',scaleWr);
+buildRulers();
+scaleWr();
+show(1);
+</script>
+</body>
+</html>
